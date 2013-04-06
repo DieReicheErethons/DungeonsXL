@@ -201,9 +201,13 @@ public class BlockListener implements Listener {
 	    	for(GameWorld gworld : GameWorld.gworlds){
 				if(event.getBlock().getWorld() == gworld.world){
 					for(DSign sign : gworld.dSigns){
-						if(sign.isRedstoneTrigger()){
+						if(sign.isRedstoneTrigger() || sign.isTrigger()){
 							if(sign.getRtBlock().isBlockPowered()){
-								sign.onTrigger();
+								if(sign.isRedstoneTrigger() && sign.isDistanceTrigger()){
+									sign.setDistanceOnly();
+								}else{
+									sign.onTrigger();
+								}
 							}
 						}
 					}
