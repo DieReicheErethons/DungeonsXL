@@ -35,48 +35,63 @@ public abstract class DSign {
 	public DSign(Sign sign, GameWorld gworld){
 		this.sign = sign;
 		this.gworld = gworld;
+
+		//Check TriggerSigns
+		if(sign.getLine(0).equalsIgnoreCase("["+SIGNTrigger.name+"]")) {
+			rtBlock = getSignRtBlock(sign);
+		}
 		
 		//Check Trigger
-		String[] splitted = sign.getLine(3).split(" ");
-		if(splitted.length > 0){
-			if(splitted[0].equalsIgnoreCase("R")){
-				if(sign.getBlock().getType() == Material.WALL_SIGN){
-					switch(sign.getData().getData()){
-					case 5:
-						rtBlock = sign.getBlock().getRelative(BlockFace.WEST);
-						break;
-					case 4:
-						rtBlock = sign.getBlock().getRelative(BlockFace.EAST);
-						break;
-					case 3:
-						rtBlock = sign.getBlock().getRelative(BlockFace.NORTH);
-						break;
-					case 2:
-						rtBlock = sign.getBlock().getRelative(BlockFace.SOUTH);
-						break;
+		String[] funcSplit = sign.getLine(3).split(",");
+		for(String funcSplitPart:funcSplit){
+			String[] splitted = funcSplitPart.split(" ");
+			if(splitted.length > 0){
+				if(splitted[0].equalsIgnoreCase("R")){
+					rtBlock = getSignRtBlock(sign);
+					if(rtBlock != null){
+						this.isRedstoneTrigger = true;
 					}
-				} else {
-					rtBlock = sign.getBlock().getRelative(BlockFace.DOWN);
-				}
-				
-				if(rtBlock != null){
-					this.isRedstoneTrigger = true;
-				}
-			} else if(splitted[0].equalsIgnoreCase("D")){
-				this.isDistanceTrigger = true;
-				
-				if(splitted.length > 1){
-					dtDistance = p.parseInt(splitted[1]);
-				}
-			} else if(splitted[0].equalsIgnoreCase("T")){
-				this.isSignTrigger = true;
-				
-				if(splitted.length > 1){
-					stId = p.parseInt(splitted[1]);
+				} else if(splitted[0].equalsIgnoreCase("D")){
+					this.isDistanceTrigger = true;
+					
+					if(splitted.length > 1){
+						dtDistance = p.parseInt(splitted[1]);
+					}
+				} else if(splitted[0].equalsIgnoreCase("T")){
+					this.isSignTrigger = true;
+					if(splitted.length > 1){
+						stId = p.parseInt(splitted[1]);
+					}
 				}
 			}
 		}
 	}
+	
+	
+	
+	public Block getSignRtBlock(Sign sign){
+		Block redBlock = null;
+		if(sign.getBlock().getType() == Material.WALL_SIGN){
+			switch(sign.getData().getData()){
+				case 5:
+					redBlock = sign.getBlock().getRelative(BlockFace.WEST);
+					break;
+				case 4:
+					redBlock = sign.getBlock().getRelative(BlockFace.EAST);
+					break;
+				case 3:
+					redBlock = sign.getBlock().getRelative(BlockFace.NORTH);
+					break;
+				case 2:
+					redBlock = sign.getBlock().getRelative(BlockFace.SOUTH);
+					break;
+			}
+		} else {
+			redBlock = sign.getBlock().getRelative(BlockFace.DOWN);
+		}
+		return redBlock;
+	}
+	
 
 	public void onInit(){
 		
@@ -129,7 +144,11 @@ public abstract class DSign {
 		return dSign;
 	}
 
-	
+	public void setDistanceOnly() {
+		isRedstoneTrigger = false;
+		isSignTrigger = false;
+	}
+
 	//Getter anb Setter
 	public boolean isRedstoneTrigger() {
 		return isRedstoneTrigger;
@@ -149,6 +168,10 @@ public abstract class DSign {
 
 	public boolean isSignTrigger() {
 		return isSignTrigger;
+	}
+
+	public boolean isTrigger() {
+		return false;
 	}
 
 	public int getStId() {

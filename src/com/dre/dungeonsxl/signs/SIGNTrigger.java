@@ -21,6 +21,11 @@ public class SIGNTrigger extends DSign{
 	public boolean check() {
 		return true;
 	}
+
+	@Override
+	public boolean isTrigger() {
+		return initialized; //true?
+	}
 	
 	@Override
 	public void onInit() {
@@ -36,7 +41,11 @@ public class SIGNTrigger extends DSign{
 			for(DSign dsign : this.gworld.dSigns){
 				if(dsign.isSignTrigger()){
 					if(triggerId == dsign.getStId()){
-						dsign.onTrigger();
+						if(dsign.isDistanceTrigger()){
+							dsign.setDistanceOnly();
+						}else{
+							dsign.onTrigger();
+						}
 					}
 				}
 			}
