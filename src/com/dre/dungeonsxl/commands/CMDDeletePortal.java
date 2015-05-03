@@ -2,6 +2,7 @@ package com.dre.dungeonsxl.commands;
 
 import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
